@@ -53,7 +53,7 @@ routes in order to initialize the model, get context, and stream the inference. 
 \* I split the logic into two calls, /get-context and /stream-inference so that the client would have access to the page sources from the context, and could use those to tell the user where 
 the information came from. Otherwise, the client would have no way to access the sources and that capability wouldn't exist.
 
-### ii. Making the Frontend
+### iii. Making the Frontend
 Now that I had the backend finished, I needed to connect it with a frontend that the user could actually use. I won't go super detailed in describing how I made it, but the gist is that
 I used React and the Mantine UI library to quickly put up a nice frontend. From there, all I had to do was call my API routes and ensure the logic worked.
 
