@@ -32,4 +32,4 @@ frontend/.pnp.js
 /backend/__pycache__
 /backend/vectordb_util/__pycache__
 /backend/venv
-/__pycache__
+__pycache__
