@@ -15,7 +15,7 @@ learning opportunity for me.
 
 ### i. Figuring out what model to use
 At the start of this project, I didn't know very much about large language models or all the different types there are. I watched a lot of videos and looked at a lot of tutorials, and settled 
-on using the google flan t5 large model from HuggingFace. I chose this model because it was really good at text to text generation, and it wasn't to big that my computer couldn't run it locally.
+on using the google flan t5 large model from HuggingFace. I chose this model because it was really good at text to text generation, and it wasn't too big that my computer couldn't run it locally.
 
 ### ii. Adding in the car manual information
 Now that I found a good model, I had to figure out a way to get it relevant information so that it can answer questions effectively. I found the car manuals online, but there was a long process
