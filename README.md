@@ -63,9 +63,9 @@ I used React and the Mantine UI library to quickly put up a nice frontend. From 
 Here I'll just go through and explain the purpose of the files I haven't talked about yet:
 * backend/vectordb_util: These files are for turning a pdf manual into the full and summary vector databases. The only method you would need is create_vector_dbs_from_pdf in pdf_to_vectordb.py,
 and calling that will take care of creating those databases
-* Frontend/Controllers/api_interactions.js: As the name suggests, this file is for interacting with the API, taking that logic out of the React files.
-* Frontend/Controllers/vehicle_info.js: This file just holds an object that has information about the currently supported vehicle's and years in the website so the car selection isn't hardcoded.
-* Frontend/Controllers/select_controller.js: This file interacts with vehicle_info.js to define some helper methods for the frontend to populate the selection dropdowns.
+* frontend/Controllers/api_interactions.js: As the name suggests, this file is for interacting with the API, taking that logic out of the React files.
+* frontend/Controllers/vehicle_info.js: This file just holds an object that has information about the currently supported vehicle's and years in the website so the car selection isn't hardcoded.
+* frontend/Controllers/select_controller.js: This file interacts with vehicle_info.js to define some helper methods for the frontend to populate the selection dropdowns.
 
 ### ii. What I got from this project
 At the start of this project I didn't know much about large language models at all, but at the end I feel a lot more comfortable with the concept and am exciting to continue learning 
