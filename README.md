@@ -4,6 +4,10 @@ Overview: This project utilizes large language models and vector databases to be
 \
 Note: I included the vector databases in the repository, but did not include any of the models since they were too large and it didn't make sense to include. The models not included are 
 the __google/flan-t5-large__, __embedding__, __bart-large-cnn__, and __bart-large-cnn-tokenizer__. 
+\
+\
+To see a demo, click [here](https://www.youtube.com/watch?v=09DRVQz9MmQ)
+
 
 ## I. Introduction
 I had the idea for this project when I was driving from Austin to Dallas and got stuck with a flat tire in a random McDonald's parking lot. I'd never changed a tire before, and in that moment 
