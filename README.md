@@ -1,4 +1,4 @@
-# Car Manual LLM
+# AutoGuru
 Overview: This project utilizes large language models and vector databases to be able to answer questions about a specific make and model of a car by searching its manual for information
 \
 \
