@@ -1,6 +1,4 @@
-import { info } from "./vehicle_info"
-
-export const get_brands = () => {
+export const get_brands = (info) => {
     let brands = Object.keys(info)
     for (let i in brands) {
         brands[i] = capitalize(brands[i])
@@ -8,8 +6,7 @@ export const get_brands = () => {
     return brands
 }
 
-export const get_models = (brand) => {
-    console.log(brand)
+export const get_models = (info, brand) => {
     brand = brand.toLowerCase()
     let models = Object.keys(info[brand])
     for (let i in models) {
@@ -18,14 +15,14 @@ export const get_models = (brand) => {
     return models
 }
 
-export const get_years = (brand, model) => {
+export const get_years = (info, brand, model) => {
     brand = brand.toLowerCase()
     model = model.toLowerCase()
     let years = Object.keys(info[brand][model])
     return years
 }
 
-export const get_car_info = (brand, model, year) => {
+export const get_car_info = (info, brand, model, year) => {
     brand = brand.toLowerCase()
     model = model.toLowerCase()
     return info[brand][model][year]

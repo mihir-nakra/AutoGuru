@@ -21,6 +21,12 @@ frontend/.pnp.js
 /frontend/npm-debug.log*
 /frontend/yarn-debug.log*
 /frontend/yarn-error.log*
+/frontend/dist
+
+# environment files
+.env
+backend/.env
+frontend/.env
 
 # machine learning models
 /backend/bart-large-cnn-model
