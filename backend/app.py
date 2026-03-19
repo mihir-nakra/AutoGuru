@@ -1,69 +1,100 @@
-from flask import Flask, request, jsonify, Response
-from model import Model
-from flask_cors import CORS
-import json 
+import json
+import os
+import re
 
-app = Flask(__name__)
-CORS(app)
+from dotenv import load_dotenv
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+from sse_starlette.sse import EventSourceResponse
 
-# Global variables to store the initialized model and tokenizer
-model = None
+from agent import create_autoguru_agent
 
-@app.route('/init', methods=['POST'])
-def initialize_model():
-    global model
-    print(model)
-    if model is None:
-        use_local = request.json.get('use_local', True)
-        model = Model(verbose=True, use_local=use_local)
+load_dotenv()
 
-    return jsonify({'message': 'Model initialized successfully.'})
+app = FastAPI()
 
-@app.route('/inference', methods=['POST'])
-def perform_inference():
-    global model
-    input_text = request.json.get('input_text', None)
-    context = request.json.get('context', None)
-    if input_text is not None and context is not None:
-        return jsonify({'input_text': input_text, 'output_text': model.inference(prompt=input_text, context=context)})
-    else:
-        return jsonify({'error': 'Input text and context is required.'}), 400
-    
-@app.route('/get-context', methods=['POST'])
-def get_context():
-    global model
-    input_text = request.json.get('input_text', None)
-    use_both = request.json.get('use_both', True)
-    db_id = request.json.get('db_id', None)
-    if input_text is not None and db_id is not None:
-        context = model.get_context(input_text, db_id, useBoth=use_both)
-        contextDict = []
-        for item in context:
-            contextDict.append(item.__dict__)
-        return jsonify({'input_text': input_text, 'context': contextDict})
-    else:
-        return jsonify({'error': 'input_text and db_id is required.'}), 400
-    
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-@app.route('/stream-inference', methods=['POST'])
-def perform_streamed_inference():
-    global model
-    input_text = request.json.get('input_text', None)
-    context = request.json.get('context', None)
-    if input_text is not None and context is not None:
-        return Response(model.stream_inference(input_text, context), content_type='text/plain', status=200)
-    else:
-        return jsonify({'error': 'Input text and context is required.'}), 400
-    
-# Handling OPTIONS requests for the same endpoint
-@app.route('/stream-inference', methods=['OPTIONS'])
-def handle_options_request():
-    # Add the necessary headers to allow the actual request
-    response = jsonify({"message": "Preflight request successful"})
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
-    response.headers.add('Access-Control-Allow-Methods', 'POST')
-    return response
+# Cache agents by db_id to avoid re-creating per request
+_agents: dict = {}
 
-if __name__ == '__main__':
-    app.run(debug=True)
+
+def get_agent(db_id: str):
+    if db_id not in _agents:
+        vectordbs_root = os.path.join(os.path.dirname(__file__), "vectordbs", db_id)
+        if not os.path.isdir(vectordbs_root):
+            raise HTTPException(status_code=404, detail=f"No vector DB found for '{db_id}'")
+        _agents[db_id] = create_autoguru_agent(db_id)
+    return _agents[db_id]
+
+
+class ChatRequest(BaseModel):
+    input_text: str
+    db_id: str
+
+
+@app.post("/chat")
+async def chat_stream(req: ChatRequest):
+    """Single endpoint: streams the agent's response as SSE events."""
+    agent = get_agent(req.db_id)
+
+    async def event_generator():
+        try:
+            async for event in agent.astream_events(
+                {"messages": [{"role": "user", "content": req.input_text}]},
+                version="v2",
+            ):
+                kind = event["event"]
+
+                if kind == "on_chat_model_stream":
+                    chunk = event["data"]["chunk"]
+                    content = chunk.content
+                    # Handle content as string or list of content blocks
+                    if isinstance(content, str) and content:
+                        yield {
+                            "event": "token",
+                            "data": json.dumps({"token": content}),
+                        }
+                    elif isinstance(content, list):
+                        for block in content:
+                            if isinstance(block, dict) and block.get("type") == "text" and block.get("text"):
+                                yield {
+                                    "event": "token",
+                                    "data": json.dumps({"token": block["text"]}),
+                                }
+
+                elif kind == "on_tool_end":
+                    tool_output = event["data"].get("output", "")
+                    pages = re.findall(r"\[Page (\d+)\]", str(tool_output))
+                    if pages:
+                        yield {
+                            "event": "sources",
+                            "data": json.dumps({"pages": sorted(set(pages))}),
+                        }
+
+            yield {"event": "done", "data": "{}"}
+
+        except Exception as e:
+            yield {
+                "event": "error",
+                "data": json.dumps({"message": str(e)}),
+            }
+
+    return EventSourceResponse(event_generator())
+
+
+@app.get("/health")
+async def health():
+    return {"status": "ok"}
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run(app, host="0.0.0.0", port=8000)

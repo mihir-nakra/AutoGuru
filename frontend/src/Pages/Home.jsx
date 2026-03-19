@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Container, Select, Title, Text, Stack, Center, Button, Box } from "@mantine/core";
 import { useNavigate } from 'react-router-dom'
 import { get_brands, get_models, get_years, get_car_info } from "../Controllers/select_controller";
-import { init } from "../Controllers/api_interactions";
 
 export default function Home() {
     const [brand, setBrand] = useState(null)
@@ -13,7 +12,6 @@ export default function Home() {
     const [years, setYears] = useState([])
 
     useEffect(() => {
-        init(true)
         setBrands(get_brands())
     }, [])
 
