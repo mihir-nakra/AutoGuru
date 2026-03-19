@@ -154,16 +154,22 @@ export default function Chat() {
                                         <Group gap="xs" mt={4} ml={4}>
                                             <Text size="xs" c="dimmed">Sources:</Text>
                                             {msg.sources.map(page => (
-                                                <Anchor
-                                                    key={page}
-                                                    href={`${carInfo.link}#page=${page}`}
-                                                    target="_blank"
-                                                    size="xs"
-                                                    c="blue.7"
-                                                    underline="hover"
-                                                >
-                                                    Page {page}
-                                                </Anchor>
+                                                carInfo?.link ? (
+                                                    <Anchor
+                                                        key={page}
+                                                        href={`${carInfo.link}#page=${page}`}
+                                                        target="_blank"
+                                                        size="xs"
+                                                        c="blue.7"
+                                                        underline="hover"
+                                                    >
+                                                        Page {page}
+                                                    </Anchor>
+                                                ) : (
+                                                    <Text key={page} size="xs" c="blue.7">
+                                                        Page {page}
+                                                    </Text>
+                                                )
                                             ))}
                                         </Group>
                                     )}

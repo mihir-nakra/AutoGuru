@@ -46,3 +46,23 @@ export const perform_inference = async (input, db_id, text_callback, source_call
 export const init = async () => {
     // No-op: Bedrock LLM doesn't need initialization
 };
+
+export const fetchVehicles = async () => {
+    const response = await fetch(`${API_BASE}/vehicles`);
+    if (!response.ok) throw new Error('Failed to fetch vehicles');
+    return response.json();
+};
+
+export const addManual = async (link, make, model, year) => {
+    const response = await fetch(`${API_BASE}/upload`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ link, make, model, year }),
+    });
+
+    if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.detail || 'Upload failed');
+    }
+    return response.json();
+};
