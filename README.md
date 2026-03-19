@@ -2,7 +2,7 @@
 
 A car manual Q&A application that uses a LangGraph ReAct agent with AWS Bedrock to answer questions about specific vehicles by searching their owner's manuals. Users select a car, ask questions in a chat interface, and get markdown-formatted answers with source page references.
 
-To see a demo of the original version, click [here](https://www.youtube.com/watch?v=09DRVQz9MmQ)
+To see a demo of the new version, click [here](https://drive.google.com/file/d/1SIKNB5CZl3ulozQ0K6eKdujENxAjV2P1/view?usp=sharing)
 
 ## Architecture
 
