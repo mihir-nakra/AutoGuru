@@ -71,7 +71,7 @@ export default function Home() {
     return (
         <Container pt="5rem" w="80%">
             <Stack ta="center">
-                <Title c="black" size={"3rem"}>Welcome To <Text span c="blue" inherit>Car Manual AI</Text>!</Title>
+                <Title c="black" size={"3rem"}>Welcome To <Text span c="blue" inherit>AutoGuru</Text>!</Title>
                 <Text fw={500} size="xl" pb="3rem" c="dimmed">Choose your vehicle's make and model to begin</Text>
                 <Center>
                     <Select
